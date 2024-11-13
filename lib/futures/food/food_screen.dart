@@ -162,7 +162,37 @@ class _ProgressWidget extends StatelessWidget {
               ),
             )
           ],
-        )
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        // ListView.separated(
+        //     shrinkWrap: true,
+        //     physics: const NeverScrollableScrollPhysics(),
+        //     itemBuilder: (BuildContext context, int index) {
+        //       return Container(
+        //         height: 60,
+        //         decoration: BoxDecoration(
+        //           borderRadius: BorderRadius.circular(20),
+        //           color: AppColors.surface,
+        //         ),
+        //         child: Row(
+        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //           children: [
+        //             Row(
+        //               children: [Image.asset(''), Text('data')],
+        //             ),
+        //             Text('data')
+        //           ],
+        //         ),
+        //       );
+        //     },
+        //     separatorBuilder: (BuildContext context, int index) {
+        //       return const SizedBox(
+        //         height: 10,
+        //       );
+        //     },
+        //     itemCount: itemCount)
       ],
     );
   }
