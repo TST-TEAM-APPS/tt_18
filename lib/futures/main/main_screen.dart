@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tt_18/components/custom_button.dart';
+import 'package:tt_18/components/custom_current_date_widget.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/fitness_goals_add_screen.dart';
@@ -23,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const _CurrentDateWIdget(),
+                const CurrentDateWIdget(),
                 const SizedBox(
                   height: 35,
                 ),
@@ -218,7 +219,7 @@ class _ProgressWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: AppColors.primary,
+                  color: AppColors.surface,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -226,7 +227,7 @@ class _ProgressWidget extends StatelessWidget {
                     Align(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        'Calories',
+                        'Activity time',
                         style: AppFonts.displaySmall
                             .copyWith(color: AppColors.onPrimary),
                       ),
@@ -288,42 +289,6 @@ class _ActivityLabel extends StatelessWidget {
     return Text(
       'Activity',
       style: AppFonts.displayLarge.copyWith(color: AppColors.onBackground),
-    );
-  }
-}
-
-class _CurrentDateWIdget extends StatelessWidget {
-  const _CurrentDateWIdget();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Text(
-              '03',
-              style:
-                  AppFonts.displayLarge.copyWith(color: AppColors.onBackground),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              'Tuesday,\nSeptember',
-              style:
-                  AppFonts.bodyMedium.copyWith(color: AppColors.onBackground),
-            ),
-          ],
-        ),
-        Image.asset(
-          'assets/icons/calendar.png',
-          width: 24,
-          height: 24,
-          fit: BoxFit.cover,
-        )
-      ],
     );
   }
 }
