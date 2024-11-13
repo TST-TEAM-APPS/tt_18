@@ -1,17 +1,17 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.tt_18.app-mergeDebugResources-26:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.example.tt_18_temirlan.app-mergeDebugResources-26:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\99699\\Documents\\GitHub\\yoga_beginner_guide_2433\\tt_18\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "/home/huntercall/Documents/GitHub/tt_18_temirlan/android/app/src/main/res/values-night/styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
-                        "startOffsets": "175,831",
+                        "startOffsets": "172,817",
                         "endLines": "7,16",
                         "endColumns": "12,12",
-                        "endOffsets": "482,997"
+                        "endOffsets": "475,981"
                     },
                     "to": {
                         "startLines": "2,6",

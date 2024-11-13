@@ -1,14 +1,14 @@
-#Wed Nov 13 13:24:46 KGT 2024
-base.0=C\:\\Users\\99699\\Documents\\GitHub\\yoga_beginner_guide_2433\\tt_18\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-base.1=C\:\\Users\\99699\\Documents\\GitHub\\yoga_beginner_guide_2433\\tt_18\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-base.2=C\:\\Users\\99699\\Documents\\GitHub\\yoga_beginner_guide_2433\\tt_18\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\15\\classes.dex
-base.3=C\:\\Users\\99699\\Documents\\GitHub\\yoga_beginner_guide_2433\\tt_18\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
-base.4=C\:\\Users\\99699\\Documents\\GitHub\\yoga_beginner_guide_2433\\tt_18\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
+#Wed Nov 13 21:31:30 KGT 2024
+base.0=/home/huntercall/Documents/GitHub/tt_18_temirlan/build/app/intermediates/dex/debug/mergeExtDexDebug/classes.dex
+base.1=/home/huntercall/Documents/GitHub/tt_18_temirlan/build/app/intermediates/dex/debug/mergeLibDexDebug/0/classes.dex
+base.2=/home/huntercall/Documents/GitHub/tt_18_temirlan/build/app/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+base.3=/home/huntercall/Documents/GitHub/tt_18_temirlan/build/app/intermediates/dex/debug/mergeProjectDexDebug/1/classes.dex
+base.4=/home/huntercall/Documents/GitHub/tt_18_temirlan/build/app/intermediates/dex/debug/mergeProjectDexDebug/3/classes.dex
 path.0=classes.dex
 path.1=0/classes.dex
-path.2=15/classes.dex
+path.2=0/classes.dex
 path.3=1/classes.dex
-path.4=0/classes.dex
+path.4=3/classes.dex
 renamed.0=classes.dex
 renamed.1=classes2.dex
 renamed.2=classes3.dex
