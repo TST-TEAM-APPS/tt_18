@@ -4,7 +4,15 @@ import 'package:tt_18/core/colors.dart';
 
 class CustomTextField extends StatefulWidget {
   final Function onChange;
-  const CustomTextField({super.key, required this.onChange});
+  final String? hintText;
+  final TextInputType? keyboardType;
+  final String? initialValue;
+  const CustomTextField(
+      {super.key,
+      required this.onChange,
+      this.hintText,
+      this.keyboardType,
+      this.initialValue});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -18,6 +26,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
   void initState() {
     _focusNode = FocusNode();
     _textEditingController = TextEditingController();
+    if (widget.initialValue != null) {
+      _textEditingController.text = widget.initialValue!;
+    }
     super.initState();
   }
 
@@ -26,6 +37,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return TextField(
       focusNode: _focusNode,
       controller: _textEditingController,
+      keyboardType: widget.keyboardType,
       style: AppFonts.bodyMedium.copyWith(color: AppColors.white),
       cursorColor: AppColors.white,
       onTapOutside: (event) {
@@ -38,6 +50,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
         fillColor: AppColors.grey,
         filled: true,
+        hintText: widget.hintText,
+        hintStyle: AppFonts.bodyMedium.copyWith(color: AppColors.darkGrey),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30), // Круглый border
         ),

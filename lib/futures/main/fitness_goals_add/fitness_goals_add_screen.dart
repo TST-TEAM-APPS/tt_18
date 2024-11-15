@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/fitness_goal_detail/fitness_goal_detail_screen.dart';
+import 'package:tt_18/futures/main/fitness_goals_add/logic/viewModel/fintess_goal_view_model.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model.dart';
 
 class FitnessGoalsAddScreen extends StatefulWidget {
-  const FitnessGoalsAddScreen({super.key});
+  final ActivityViewModel model;
+  const FitnessGoalsAddScreen({
+    super.key,
+    required this.model,
+  });
 
   @override
   State<FitnessGoalsAddScreen> createState() => _FitnessGoalsAddScreenState();
@@ -81,29 +86,32 @@ class _FitnessGoalsAddScreenState extends State<FitnessGoalsAddScreen> {
                 height: 40,
               ),
               ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    return _FitnessGoalsAddItemWidget(
-                      title: fitnessGoalModelList[index].title,
-                      imagePath: fitnessGoalModelList[index].imagePath,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => FitnessGoalDetailScreen(
-                                model: fitnessGoalModelList[index]),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) {
+                  return _FitnessGoalsAddItemWidget(
+                    title: fitnessGoalModelList[index].title,
+                    imagePath: fitnessGoalModelList[index].imagePath,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => FitnessGoalDetailScreen(
+                            model: fitnessGoalModelList[index],
+                            viewModel: widget.model,
                           ),
-                        );
-                      },
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const SizedBox(
-                      height: 10,
-                    );
-                  },
-                  itemCount: fitnessGoalModelList.length),
+                        ),
+                      );
+                    },
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return const SizedBox(
+                    height: 10,
+                  );
+                },
+                itemCount: fitnessGoalModelList.length,
+              ),
             ],
           ),
         ),

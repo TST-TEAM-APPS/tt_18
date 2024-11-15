@@ -1,32 +1,297 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pull_down_button/pull_down_button.dart';
 import 'package:tt_18/components/custom_current_date_widget.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
+import 'package:tt_18/futures/food/food_details_screen/food_details.dart';
+import 'package:tt_18/futures/food/model/food_item_model.dart';
+import 'package:tt_18/futures/food/model/food_model.dart';
+import 'package:tt_18/futures/home/home_screen.dart';
 
-class FoodScreen extends StatefulWidget {
+class FoodScreen extends StatelessWidget {
   const FoodScreen({super.key});
 
   @override
-  State<FoodScreen> createState() => _FoodScreenState();
-}
-
-class _FoodScreenState extends State<FoodScreen> {
-  @override
   Widget build(BuildContext context) {
-    return const SafeArea(
+    return SafeArea(
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            CurrentDateWIdget(),
-            SizedBox(
+            CurrentDateWIdget(
+              value: [
+                context.watch<FoodViewModel>().state.currentDateTime ??
+                    DateTime.now(),
+              ],
+              onChangeDate: (DateTime value) {
+                context.read<FoodViewModel>().onUpdatedDate(value);
+              },
+            ),
+            const SizedBox(
               height: 30,
             ),
-            _ProgressWidget(),
+            const _ProgressWidget(),
+            const SizedBox(
+              height: 20,
+            ),
+            Column(
+              children: [
+                _FoodItemCardWidget(
+                  id: 0,
+                  model: context
+                      .select((FoodViewModel vm) => vm.state.foodBreakfestList),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                _FoodItemCardWidget(
+                  id: 1,
+                  model: context
+                      .select((FoodViewModel vm) => vm.state.foodLunchList),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                _FoodItemCardWidget(
+                  id: 2,
+                  model: context
+                      .select((FoodViewModel vm) => vm.state.foodSnakList),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                _FoodItemCardWidget(
+                  id: 3,
+                  model: context
+                      .select((FoodViewModel vm) => vm.state.foodDinnerList),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
+  }
+}
+
+class _FoodItemCardWidget extends StatelessWidget {
+  final int id;
+  final List<FoodModel?>? model;
+
+  const _FoodItemCardWidget({
+    required this.id,
+    required this.model,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Material(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(20),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => FoodDetails(
+                          currentDate: context
+                              .read<FoodViewModel>()
+                              .state
+                              .currentDateTime!,
+                          onSave: (value) {
+                            context
+                                .read<FoodViewModel>()
+                                .onFoodItemAdded(value);
+                          },
+                          foodType: foodItemList[id].type)));
+            },
+            highlightColor: Colors.white.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              height: 60,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.transparent,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Image.asset(foodItemList[id].imageath),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        foodItemList[id].title,
+                        style: AppFonts.displaySmall
+                            .copyWith(color: AppColors.white),
+                      )
+                    ],
+                  ),
+                  Image.asset(
+                    'assets/icons/plus.png',
+                    width: 24,
+                    height: 24,
+                    fit: BoxFit.cover,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        _FoodListWidget(
+          model: model,
+        )
+      ],
+    );
+  }
+}
+
+class _FoodListWidget extends StatelessWidget {
+  final List<FoodModel?>? model;
+  const _FoodListWidget({required this.model});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColors.grey,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: const EdgeInsets.all(10),
+            height: 70,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      model![index]!.name.toString(),
+                      style: AppFonts.displaySmall
+                          .copyWith(color: AppColors.white),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      height: 20,
+                      width: 14,
+                      child: PullDownButton(
+                        itemBuilder: (context) => [
+                          PullDownMenuItem(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => FoodDetails(
+                                    onSave: (value) {
+                                      context
+                                          .read<FoodViewModel>()
+                                          .onUpdatedFood(value);
+                                    },
+                                    model: model![index],
+                                  ),
+                                ),
+                              );
+                            },
+                            title: 'Edit',
+                            icon: CupertinoIcons.pencil,
+                          ),
+                          PullDownMenuItem(
+                            onTap: () {
+                              context
+                                  .read<FoodViewModel>()
+                                  .onDeleteFood(model![index]!);
+                            },
+                            title: 'Delete',
+                            iconColor: Colors.red,
+                            icon: CupertinoIcons.delete,
+                          ),
+                        ],
+                        buttonBuilder: (context, showMenu) => CupertinoButton(
+                            onPressed: showMenu,
+                            padding: EdgeInsets.zero,
+                            child: Image.asset(
+                              'assets/icons/dots.png',
+                              width: 14,
+                              height: 2,
+                              fit: BoxFit.cover,
+                            )),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 7,
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Text(
+                        '${model![index]!.quantity} ${model![index]!.quantityType.toString().split('.').last}',
+                        style: AppFonts.bodyMedium
+                            .copyWith(color: AppColors.white),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        '${model![index]!.calories} Kcal',
+                        style: AppFonts.bodyMedium
+                            .copyWith(color: AppColors.white),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        '${model![index]!.proteins} (P)',
+                        style: AppFonts.bodyMedium
+                            .copyWith(color: AppColors.white),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        '${model![index]!.fats} (F)',
+                        style: AppFonts.bodyMedium
+                            .copyWith(color: AppColors.white),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        '${model![index]!.carbs} (C)',
+                        style: AppFonts.bodyMedium
+                            .copyWith(color: AppColors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(
+            height: 10,
+          );
+        },
+        itemCount: model?.length ?? 0);
   }
 }
 
@@ -35,6 +300,7 @@ class _ProgressWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<FoodViewModel>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -82,7 +348,7 @@ class _ProgressWidget extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '0',
+                            text: '${model.state.totalCalories ?? 0}',
                             style: AppFonts.displayLarge
                                 .copyWith(color: AppColors.onPrimary),
                           ),
@@ -138,23 +404,23 @@ class _ProgressWidget extends StatelessWidget {
                         Column(
                           children: [
                             Text(
-                              '0',
+                              '${model.state.totalProteins ?? 0}',
                               style: AppFonts.displaySmall
                                   .copyWith(color: AppColors.onPrimary),
                             ),
                             Text(
-                              '0',
+                              '${model.state.totalCarbs ?? 0}',
                               style: AppFonts.displaySmall
                                   .copyWith(color: AppColors.onPrimary),
                             ),
                             Text(
-                              '0',
+                              '${model.state.totalCalories ?? 0}',
                               style: AppFonts.displaySmall
                                   .copyWith(color: AppColors.onPrimary),
                             ),
                           ],
                         ),
-                        SizedBox()
+                        const SizedBox()
                       ],
                     ),
                   ],
@@ -163,36 +429,6 @@ class _ProgressWidget extends StatelessWidget {
             )
           ],
         ),
-        const SizedBox(
-          height: 20,
-        ),
-        // ListView.separated(
-        //     shrinkWrap: true,
-        //     physics: const NeverScrollableScrollPhysics(),
-        //     itemBuilder: (BuildContext context, int index) {
-        //       return Container(
-        //         height: 60,
-        //         decoration: BoxDecoration(
-        //           borderRadius: BorderRadius.circular(20),
-        //           color: AppColors.surface,
-        //         ),
-        //         child: Row(
-        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //           children: [
-        //             Row(
-        //               children: [Image.asset(''), Text('data')],
-        //             ),
-        //             Text('data')
-        //           ],
-        //         ),
-        //       );
-        //     },
-        //     separatorBuilder: (BuildContext context, int index) {
-        //       return const SizedBox(
-        //         height: 10,
-        //       );
-        //     },
-        //     itemCount: itemCount)
       ],
     );
   }

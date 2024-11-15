@@ -1,5 +1,4 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
@@ -54,7 +53,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
         config: config,
         value: widget.value,
         onValueChanged: (dates) {
-          widget.onChangeDate(dates);
+          widget.onChangeDate(dates[0]);
         },
       ),
     );

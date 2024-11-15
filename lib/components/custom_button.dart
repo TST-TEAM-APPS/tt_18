@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tt_18/core/colors.dart';
 
 enum _Variant { standart, alert }
 
@@ -11,6 +12,7 @@ class CustomButton extends StatefulWidget {
   final BorderRadius? borderRadius;
   final double? width;
   final Function onTap;
+  final bool? isValid;
   final _Variant _variant;
 
   const CustomButton(
@@ -19,22 +21,24 @@ class CustomButton extends StatefulWidget {
       this.titleStyle,
       this.backgroundColor,
       this.highlightColor,
+      this.isValid,
       this.padding,
       this.width,
       this.borderRadius,
       required this.onTap})
       : _variant = _Variant.standart;
 
-  const CustomButton.alert(
-      {super.key,
-      required this.title,
-      this.highlightColor,
-      required this.onTap,
-      this.titleStyle,
-      this.width,
-      this.borderRadius,
-      this.padding})
-      : backgroundColor = Colors.transparent,
+  const CustomButton.alert({
+    super.key,
+    required this.title,
+    this.highlightColor,
+    required this.onTap,
+    this.titleStyle,
+    this.width,
+    this.borderRadius,
+    this.padding,
+    this.isValid = true,
+  })  : backgroundColor = Colors.transparent,
         _variant = _Variant.alert;
 
   @override
@@ -45,13 +49,14 @@ class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: widget.backgroundColor,
+      color:
+          widget.isValid ?? true ? widget.backgroundColor : AppColors.darkGrey,
       borderRadius: widget.borderRadius,
       child: InkWell(
         highlightColor: widget.highlightColor ?? Colors.white.withOpacity(0.7),
         borderRadius: widget.borderRadius,
         onTap: () {
-          widget.onTap();
+          widget.isValid ?? true ? widget.onTap() : null;
         },
         child: Container(
             padding: widget.padding ??
@@ -68,7 +73,10 @@ class _CustomButtonState extends State<CustomButton> {
                 ? Center(
                     child: Text(
                       widget.title,
-                      style: widget.titleStyle,
+                      style: widget.titleStyle?.copyWith(
+                          color: widget.isValid ?? true
+                              ? widget.titleStyle?.color
+                              : AppColors.grey),
                     ),
                   )
                 : Text(

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:tt_18/components/custom_button.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import 'package:tt_18/components/custom_current_date_widget.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/fitness_goals_add_screen.dart';
-import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model.dart';
+import 'package:tt_18/futures/main/fitness_goals_add/logic/viewModel/fintess_goal_view_model.dart';
+import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model_hive.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,8 +17,126 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  void _showBottomSheet(
+      BuildContext context, Function? onChange, FitnessGoalModelHive model) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: AppColors.grey,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      model.imagePath,
+                      width: 36,
+                      height: 36,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      '${DateFormat('dd MMM').format(model.startedDate)} - ${DateFormat('dd MMM yyyy').format(model.startedDate)}',
+                      style: AppFonts.bodySmall.copyWith(
+                        color: AppColors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      model.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: AppFonts.displaySmall.copyWith(
+                        color: AppColors.white,
+                      ),
+                    ),
+                    if (model.description != null)
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '${model.description}',
+                            style: AppFonts.bodySmall.copyWith(
+                              color: AppColors.white,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          )
+                        ],
+                      ),
+                  ]),
+              if (model.goal != null)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      '${model.currentProgress ?? 0}/${model.goal} kg',
+                      style: AppFonts.bodyMedium.copyWith(
+                        color: AppColors.white,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: AppColors.darkGrey,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Container(
+                            width: model.currentProgress == null
+                                ? 0
+                                : 163 / model.goal! * model.currentProgress!,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<ActivityViewModel>();
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -24,7 +145,12 @@ class _MainScreenState extends State<MainScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CurrentDateWIdget(),
+                CurrentDateWIdget(
+                  value: [
+                    DateTime.now(),
+                  ],
+                  onChangeDate: () {},
+                ),
                 const SizedBox(
                   height: 35,
                 ),
@@ -36,18 +162,247 @@ class _MainScreenState extends State<MainScreen> {
                 const SizedBox(
                   height: 23,
                 ),
-                _NothingWidget(
-                  title: 'Fitness goals',
-                  imagePath: 'assets/images/target.png',
-                  text: 'No long-term goals',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const FitnessGoalsAddScreen()),
-                    );
-                  },
-                ),
+                if (model.fitnessState.fitnessGoalList.isEmpty)
+                  _NothingWidget(
+                    title: 'Fitness goals',
+                    imagePath: 'assets/images/target.png',
+                    text: 'No long-term goals',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FitnessGoalsAddScreen(
+                                  model: model,
+                                )),
+                      );
+                    },
+                  ),
+                if (model.fitnessState.fitnessGoalList.isNotEmpty)
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Fitness goals',
+                            style: AppFonts.displayMedium.copyWith(
+                              color: AppColors.white,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => FitnessGoalsAddScreen(
+                                          model: model,
+                                        )),
+                              );
+                            },
+                            child: Image.asset(
+                              'assets/icons/rounded-plus.png',
+                              width: 34,
+                              height: 34,
+                            ),
+                          )
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15),
+                        child: SizedBox(
+                          height: 163,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: ListView.separated(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Material(
+                                    color: AppColors.grey,
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: InkWell(
+                                      highlightColor:
+                                          AppColors.white.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(20),
+                                      onTap: () {},
+                                      child: Container(
+                                        width: 162,
+                                        height: 163,
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: Colors.transparent,
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Image.asset(
+                                                    model
+                                                        .fitnessState
+                                                        .fitnessGoalList[index]!
+                                                        .imagePath,
+                                                    width: 36,
+                                                    height: 36,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    '${DateFormat('dd MMM').format(model.fitnessState.fitnessGoalList[index]!.startedDate)} - ${DateFormat('dd MMM yyyy').format(model.fitnessState.fitnessGoalList![index]!.startedDate)}',
+                                                    style: AppFonts.bodySmall
+                                                        .copyWith(
+                                                      color: AppColors.white,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                  ),
+                                                  Text(
+                                                    model
+                                                        .fitnessState
+                                                        .fitnessGoalList[index]!
+                                                        .name,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                    style: AppFonts.displaySmall
+                                                        .copyWith(
+                                                      color: AppColors.white,
+                                                    ),
+                                                  ),
+                                                  if (model
+                                                          .fitnessState
+                                                          .fitnessGoalList[
+                                                              index]!
+                                                          .description !=
+                                                      null)
+                                                    Column(
+                                                      children: [
+                                                        const SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        Text(
+                                                          '${model.fitnessState.fitnessGoalList[index]!.description}',
+                                                          style: AppFonts
+                                                              .bodySmall
+                                                              .copyWith(
+                                                            color:
+                                                                AppColors.white,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 5,
+                                                        )
+                                                      ],
+                                                    ),
+                                                ]),
+                                            if (model
+                                                    .fitnessState
+                                                    .fitnessGoalList[index]!
+                                                    .goal !=
+                                                null)
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    '${model.fitnessState.fitnessGoalList[index]!.currentProgress ?? 0}/${model.fitnessState.fitnessGoalList[index]!.goal} kg',
+                                                    style: AppFonts.bodyMedium
+                                                        .copyWith(
+                                                      color: AppColors.white,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                    child: Stack(
+                                                      children: [
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                          height: 5,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .darkGrey,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          width: model
+                                                                      .fitnessState
+                                                                      .fitnessGoalList[
+                                                                          index]!
+                                                                      .currentProgress ==
+                                                                  null
+                                                              ? 0
+                                                              : 163 /
+                                                                  model
+                                                                      .fitnessState
+                                                                      .fitnessGoalList[
+                                                                          index]!
+                                                                      .goal! *
+                                                                  model
+                                                                      .fitnessState
+                                                                      .fitnessGoalList[
+                                                                          index]!
+                                                                      .currentProgress!,
+                                                          height: 5,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .primary,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return const SizedBox(
+                                    width: 10,
+                                  );
+                                },
+                                itemCount:
+                                    model.fitnessState.fitnessGoalList.length),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 const SizedBox(
                   height: 10,
                 ),
