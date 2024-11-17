@@ -7,10 +7,10 @@ import 'package:tt_18/components/custom_button.dart';
 import 'package:tt_18/components/custom_cupertino_picker.dart';
 
 import 'package:tt_18/components/custom_current_date_widget.dart';
-import 'package:tt_18/components/custom_text_field.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
 import 'package:tt_18/futures/main/day_goal_add/day_goad_adding_screen.dart/day_goal_adding_screen.dart';
+import 'package:tt_18/futures/main/day_goal_add/model/day_goal_model_hive.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/fitness_goal_detail/fitness_goal_detail_screen.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/fitness_goals_add_screen.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model.dart';
@@ -36,14 +36,6 @@ class _MainScreenState extends State<MainScreen> {
   String _getDayAbbreviation(int weekday) {
     const dayAbbreviations = ["M", "T", "W", "T", "F", "S", "S"];
     return dayAbbreviations[weekday - 1];
-  }
-
-  bool _isChecked = false;
-
-  void _toggleCheck(bool? value) {
-    setState(() {
-      _isChecked = value ?? false;
-    });
   }
 
   void _showChangeGoalBottomSheet(
@@ -369,6 +361,18 @@ class _MainScreenState extends State<MainScreen> {
       inputTitle: 'What area of flexibility do you want to improve?',
     ),
   ];
+
+  bool isEqual(DayGoalModelHive trainingHiveModel, DateTime dateTime) {
+    bool? isTrue;
+    for (var date in trainingHiveModel.isDone) {
+      if (date.year == dateTime.year &&
+          date.month == dateTime.month &&
+          date.day == dateTime.day) {
+        isTrue = true;
+      }
+    }
+    return isTrue ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -730,21 +734,6 @@ class _MainScreenState extends State<MainScreen> {
                       const SizedBox(
                         height: 10,
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: CustomTextField(
-                              onChange: (value) {},
-                              hintText: 'Search',
-                            )),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
                       ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -806,7 +795,6 @@ class _MainScreenState extends State<MainScreen> {
                                                     ),
                                                     PullDownMenuItem(
                                                       onTap: () {
-                                                        print('object');
                                                         model.onDeleteDayGoal(
                                                             model.dayGoalState
                                                                     .dayGoalList[
@@ -836,19 +824,38 @@ class _MainScreenState extends State<MainScreen> {
                                               ),
                                             ],
                                           ),
-                                          Checkbox(
-                                            value: _isChecked,
-                                            onChanged: _toggleCheck,
-                                            checkColor: AppColors.grey,
-                                            activeColor: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
+                                          GestureDetector(
+                                            onTap: () {
+                                              model.onTaskComplete(model
+                                                  .dayGoalState
+                                                  .dayGoalList[index]!);
+                                            },
+                                            child: Icon(
+                                              isEqual(
+                                                      model.dayGoalState
+                                                          .dayGoalList[index]!,
+                                                      model.dayGoalState
+                                                          .currentDate!)
+                                                  ? Icons.check_box
+                                                  : Icons
+                                                      .check_box_outline_blank,
+                                              weight: 24,
+                                              color: Colors.white,
                                             ),
-                                            side: const BorderSide(
-                                                color: AppColors.white,
-                                                width: 2),
                                           ),
+                                          // Checkbox(
+                                          //   value: _isChecked,
+                                          //   onChanged: _toggleCheck,
+                                          //   checkColor: AppColors.grey,
+                                          //   activeColor: Colors.white,
+                                          //   shape: RoundedRectangleBorder(
+                                          //     borderRadius:
+                                          //         BorderRadius.circular(5),
+                                          //   ),
+                                          //   side: const BorderSide(
+                                          //       color: AppColors.white,
+                                          //       width: 2),
+                                          // ),
                                         ],
                                       ),
                                       const SizedBox(
@@ -1076,9 +1083,38 @@ class _NothingWidget extends StatelessWidget {
 
 class _ProgressWidget extends StatelessWidget {
   const _ProgressWidget();
+  Widget _formatTime(int minutes) {
+    final hours = minutes ~/ 60;
+    final remainingMinutes = minutes % 60;
+    return RichText(
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: hours.toString().padLeft(2, ''),
+            style: AppFonts.displayLarge.copyWith(color: AppColors.onPrimary),
+          ),
+          TextSpan(
+            text: 'H',
+            style: AppFonts.displaySmall.copyWith(color: AppColors.onPrimary),
+          ),
+          TextSpan(
+            text: remainingMinutes.toString().padLeft(2, '0'),
+            style: AppFonts.displayLarge.copyWith(color: AppColors.onPrimary),
+          ),
+          TextSpan(
+            text: 'M',
+            style: AppFonts.displaySmall.copyWith(color: AppColors.onPrimary),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<ActivityViewModel>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1116,12 +1152,13 @@ class _ProgressWidget extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '0',
+                            text:
+                                model.foodCalorieState.totalCalories.toString(),
                             style: AppFonts.displayLarge
                                 .copyWith(color: AppColors.onPrimary),
                           ),
                           TextSpan(
-                            text: '/0',
+                            text: '/${model.foodCalorieState.calorieGoal}',
                             style: AppFonts.displaySmall
                                 .copyWith(color: AppColors.onPrimary),
                           ),
@@ -1156,41 +1193,7 @@ class _ProgressWidget extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '0',
-                            style: AppFonts.displayLarge
-                                .copyWith(color: AppColors.onPrimary),
-                          ),
-                          const WidgetSpan(
-                            child: SizedBox(width: 2),
-                          ),
-                          TextSpan(
-                            text: 'H',
-                            style: AppFonts.displaySmall
-                                .copyWith(color: AppColors.onPrimary),
-                          ),
-                          const WidgetSpan(
-                            child: SizedBox(width: 10),
-                          ),
-                          TextSpan(
-                            text: '0',
-                            style: AppFonts.displayMedium
-                                .copyWith(color: AppColors.onPrimary),
-                          ),
-                          const WidgetSpan(
-                            child: SizedBox(width: 2),
-                          ),
-                          TextSpan(
-                            text: 'Min',
-                            style: AppFonts.displaySmall
-                                .copyWith(color: AppColors.onPrimary),
-                          ),
-                        ],
-                      ),
-                    )
+                    _formatTime(model.trainingActivityModelState.activityTime),
                   ],
                 ),
               ),

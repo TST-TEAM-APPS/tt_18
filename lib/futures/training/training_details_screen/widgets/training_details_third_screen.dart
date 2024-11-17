@@ -6,7 +6,18 @@ import 'package:tt_18/core/colors.dart';
 
 class TrainingDetailsThirdScreen extends StatefulWidget {
   final PageController pageController;
-  const TrainingDetailsThirdScreen({super.key, required this.pageController});
+  final Function onNext;
+  final int? workingTime;
+  final int? restTime;
+  final int? preps;
+
+  const TrainingDetailsThirdScreen(
+      {super.key,
+      required this.pageController,
+      required this.onNext,
+      this.workingTime,
+      this.restTime,
+      this.preps});
 
   @override
   State<TrainingDetailsThirdScreen> createState() =>
@@ -15,6 +26,24 @@ class TrainingDetailsThirdScreen extends StatefulWidget {
 
 class _TrainingDetailsThirdScreenState
     extends State<TrainingDetailsThirdScreen> {
+  int workingTime = 0;
+  int restTime = 0;
+  int numberOfPreps = 0;
+
+  @override
+  void initState() {
+    if (widget.workingTime != null) {
+      workingTime = widget.workingTime!;
+    }
+    if (widget.restTime != null) {
+      restTime = widget.restTime!;
+    }
+    if (widget.preps != null) {
+      numberOfPreps = widget.preps!;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -29,7 +58,13 @@ class _TrainingDetailsThirdScreenState
         const SizedBox(
           height: 20,
         ),
-        const _TimeSelector(),
+        _TimeSelector(
+          initialValue: workingTime,
+          onChange: (value) {
+            workingTime = value;
+            setState(() {});
+          },
+        ),
         const SizedBox(
           height: 30,
         ),
@@ -42,7 +77,13 @@ class _TrainingDetailsThirdScreenState
         const SizedBox(
           height: 20,
         ),
-        const _TimeSelector(),
+        _TimeSelector(
+          initialValue: restTime,
+          onChange: (value) {
+            restTime = value;
+            setState(() {});
+          },
+        ),
         const SizedBox(
           height: 30,
         ),
@@ -55,20 +96,26 @@ class _TrainingDetailsThirdScreenState
         const SizedBox(
           height: 20,
         ),
-        const _TimeSelector(),
+        _TimeSelector(
+          initialValue: numberOfPreps,
+          onChange: (value) {
+            numberOfPreps = value;
+            setState(() {});
+          },
+        ),
         const SizedBox(
           height: 30,
         ),
         CustomButton(
           onTap: () {
+            widget.onNext(workingTime, restTime, numberOfPreps);
             widget.pageController.nextPage(
                 duration: const Duration(microseconds: 500),
                 curve: Curves.easeInOut);
           },
           title: 'Save',
           backgroundColor: AppColors.primary,
-          // isValid:
-          //     selectedDays.isNotEmpty && name != null && description != null,
+          isValid: workingTime != 0 && restTime != 0 && numberOfPreps != 0,
           borderRadius: BorderRadius.circular(20),
           highlightColor: Colors.white.withOpacity(0.5),
           titleStyle: AppFonts.displayMedium.copyWith(color: AppColors.white),
@@ -78,8 +125,31 @@ class _TrainingDetailsThirdScreenState
   }
 }
 
-class _TimeSelector extends StatelessWidget {
-  const _TimeSelector({super.key});
+class _TimeSelector extends StatefulWidget {
+  final int? initialValue;
+  final Function onChange;
+  const _TimeSelector({super.key, required this.onChange, this.initialValue});
+
+  @override
+  State<_TimeSelector> createState() => _TimeSelectorState();
+}
+
+class _TimeSelectorState extends State<_TimeSelector> {
+  int value = 0;
+  String _formatTime(int minutes) {
+    final hours = minutes ~/ 60;
+    final remainingMinutes = minutes % 60;
+    return '${hours.toString().padLeft(2, '0')}:${remainingMinutes.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void initState() {
+    if (widget.initialValue != null) {
+      value = widget.initialValue!;
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,28 +162,45 @@ class _TimeSelector extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            height: 35,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primary,
-            ),
-            child: Center(
-              child: Image.asset('assets/icons/rounded-minus.png'),
+          GestureDetector(
+            onTap: () {
+              if (value == 0) {
+                return;
+              }
+              value -= 1;
+              widget.onChange(value);
+              setState(() {});
+            },
+            child: Container(
+              height: 35,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary,
+              ),
+              child: Center(
+                child: Image.asset('assets/icons/rounded-minus.png'),
+              ),
             ),
           ),
           Text(
-            '00:00',
+            _formatTime(value),
             style: AppFonts.displayMedium.copyWith(color: AppColors.onSurface),
           ),
-          Container(
-            height: 35,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primary,
-            ),
-            child: Center(
-              child: Image.asset('assets/icons/rounded-plus.png'),
+          GestureDetector(
+            onTap: () {
+              value += 1;
+              widget.onChange(value);
+              setState(() {});
+            },
+            child: Container(
+              height: 35,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary,
+              ),
+              child: Center(
+                child: Image.asset('assets/icons/rounded-plus.png'),
+              ),
             ),
           ),
         ],

@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_down_button/pull_down_button.dart';
+import 'package:tt_18/components/custom_button.dart';
 import 'package:tt_18/components/custom_current_date_widget.dart';
+import 'package:tt_18/components/custom_text_field.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
 import 'package:tt_18/futures/food/food_details_screen/food_details.dart';
@@ -333,11 +335,80 @@ class _ProgressWidget extends StatelessWidget {
                           style: AppFonts.displaySmall
                               .copyWith(color: AppColors.onPrimary),
                         ),
-                        Image.asset(
-                          'assets/icons/pencil-edit.png',
-                          height: 24,
-                          width: 24,
-                          fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: () {
+                            int? number;
+                            showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                      bottom: MediaQuery.of(context)
+                                          .viewInsets
+                                          .bottom,
+                                    ),
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20)),
+                                        color: AppColors.primary,
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Your ideal daily calorie intake?',
+                                            style: AppFonts.displayMedium
+                                                .copyWith(
+                                                    color: AppColors.white),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          CustomTextField(
+                                            onChange: (value) {
+                                              number = int.tryParse(value);
+                                            },
+                                            hintText: '0',
+                                          ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          CustomButton(
+                                            title: 'Save',
+                                            titleStyle:
+                                                AppFonts.displaySmall.copyWith(
+                                              color: AppColors.white,
+                                            ),
+                                            onTap: () {
+                                              model.onSetCalorie(number ?? 0);
+                                              Navigator.pop(context);
+                                            },
+                                            backgroundColor: AppColors.surface,
+                                            highlightColor:
+                                                Colors.white.withOpacity(0.5),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                });
+                          },
+                          child: Container(
+                            color: Colors.transparent,
+                            child: Image.asset(
+                              'assets/icons/pencil-edit.png',
+                              height: 24,
+                              width: 24,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -356,7 +427,7 @@ class _ProgressWidget extends StatelessWidget {
                                   .copyWith(color: AppColors.onPrimary),
                             ),
                             TextSpan(
-                              text: '/0',
+                              text: '/${model.state.calorieGoal}',
                               style: AppFonts.displaySmall
                                   .copyWith(color: AppColors.onPrimary),
                             ),

@@ -12,17 +12,18 @@ class TrainingViewModel extends ChangeNotifier {
 
   Future<void> loadData() async {
     await _trainingModelService.loadData();
-    await Future.delayed(const Duration(milliseconds: 500));
+
     _trainingState = TrainingState(
       trainingList: _trainingModelService.trainingList,
       isLoading: false,
       currentDate: _trainingModelService.currentDateTime,
     );
+    print(_trainingState.trainingList.length);
 
     notifyListeners();
   }
 
-  ActivityViewModel() {
+  TrainingViewModel() {
     loadData();
   }
 
@@ -34,6 +35,17 @@ class TrainingViewModel extends ChangeNotifier {
       currentDate: _trainingModelService.currentDateTime,
     );
 
+    notifyListeners();
+  }
+
+  void onTaskComplete(TrainingHiveModel trainingModel) async {
+    await _trainingModelService.taskComplete(trainingModel).then((_) {
+      _trainingState = TrainingState(
+        trainingList: _trainingModelService.trainingList,
+        isLoading: false,
+        currentDate: _trainingModelService.currentDateTime,
+      );
+    });
     notifyListeners();
   }
 

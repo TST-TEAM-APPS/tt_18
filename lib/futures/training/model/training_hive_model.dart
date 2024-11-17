@@ -21,6 +21,8 @@ class TrainingHiveModel extends HiveObject {
   int numberOfRep;
   @HiveField(7)
   TrainingType trainingType;
+  @HiveField(8)
+  List<DateTime> completedDates;
 
   TrainingHiveModel({
     int? id,
@@ -31,6 +33,7 @@ class TrainingHiveModel extends HiveObject {
     required this.restTime,
     required this.workingTime,
     required this.trainingType,
+    this.completedDates = const [],
   }) : id = id ?? DateTime.now().microsecondsSinceEpoch;
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/btm.dart';
 import 'package:tt_18/core/colors.dart';
@@ -22,6 +23,7 @@ class FoodViewModelState {
   double? totalFats;
   double? totalCarbs;
   DateTime? currentDateTime;
+  int? calorieGoal;
 
   FoodViewModelState({
     this.totalCalories,
@@ -33,6 +35,7 @@ class FoodViewModelState {
     this.totalFats,
     this.totalProteins,
     this.currentDateTime,
+    this.calorieGoal,
   });
 }
 
@@ -53,12 +56,31 @@ class FoodViewModel extends ChangeNotifier {
       totalFats: _foodService.totalFats,
       totalProteins: _foodService._totalProteins,
       currentDateTime: _foodService._dateTime,
+      calorieGoal: _foodService._calorieGoal,
     );
     notifyListeners();
   }
 
   FoodViewModel() {
     loadData();
+  }
+
+  void onSetCalorie(int number) async {
+    await _foodService.setCalorieGoal(number);
+    _state = _state = FoodViewModelState(
+      foodBreakfestList: _foodService._foodBreakfestList,
+      foodDinnerList: _foodService._foodDinnerList,
+      foodLunchList: _foodService._foodLunchList,
+      foodSnakList: _foodService._foodLunchList,
+      totalCalories: _foodService._totalCalories,
+      totalCarbs: _foodService._totalCarbs,
+      totalFats: _foodService.totalFats,
+      totalProteins: _foodService._totalProteins,
+      currentDateTime: _foodService._dateTime,
+      calorieGoal: _foodService._calorieGoal,
+    );
+
+    notifyListeners();
   }
 
   void onDeleteFood(FoodModel foodModel) async {
@@ -73,6 +95,7 @@ class FoodViewModel extends ChangeNotifier {
       totalFats: _foodService.totalFats,
       totalProteins: _foodService._totalProteins,
       currentDateTime: _foodService._dateTime,
+      calorieGoal: _foodService._calorieGoal,
     );
     notifyListeners();
   }
@@ -89,6 +112,7 @@ class FoodViewModel extends ChangeNotifier {
         totalFats: _foodService._totalFats,
         totalProteins: _foodService._totalProteins,
         currentDateTime: _foodService._dateTime,
+        calorieGoal: _foodService._calorieGoal,
       );
     });
     notifyListeners();
@@ -106,6 +130,7 @@ class FoodViewModel extends ChangeNotifier {
         totalFats: _foodService._totalFats,
         totalProteins: _foodService._totalProteins,
         currentDateTime: _foodService._dateTime,
+        calorieGoal: _foodService._calorieGoal,
       );
     });
 
@@ -124,6 +149,7 @@ class FoodViewModel extends ChangeNotifier {
         totalFats: _foodService._totalFats,
         totalProteins: _foodService._totalProteins,
         currentDateTime: _foodService._dateTime,
+        calorieGoal: _foodService._calorieGoal,
       );
       notifyListeners();
     });
@@ -140,6 +166,7 @@ class FoodService {
   double? _totalProteins;
   double? _totalCarbs;
   double? _totalFats;
+  int? _calorieGoal;
 
   DateTime _dateTime = DateTime.now();
 
@@ -147,6 +174,8 @@ class FoodService {
   List<FoodModel?>? get foodLunchList => _foodLunchList;
   List<FoodModel?>? get foodDinnerList => _foodDinnerList;
   List<FoodModel?>? get foodSnakList => _foodSnakList;
+  int? get calorieGoal => _calorieGoal;
+
   int? get totalCalories => _totalCalories;
   double? get totalProteins => _totalProteins;
   double? get totalCarbs => _totalCarbs;
@@ -156,6 +185,7 @@ class FoodService {
   Future<void> loadData() async {
     final foodModelBox = await Hive.openBox<FoodModel>('_foodList');
     _foodList = foodModelBox.values.toList();
+
     await update();
   }
 
@@ -170,6 +200,19 @@ class FoodService {
     _totalCarbs = await getTotalCarbs(_dateTime);
     _totalFats = await getTotalFats(_dateTime);
     _totalProteins = await getTotalProteins(_dateTime);
+    _calorieGoal = await getCalorieGoal();
+  }
+
+  Future<int> getCalorieGoal() async {
+    final prefs = await SharedPreferences.getInstance();
+    final result = prefs.getInt('calorieGoal') ?? 0;
+    return result;
+  }
+
+  Future<void> setCalorieGoal(int a) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('calorieGoal', a);
+    _calorieGoal = await getCalorieGoal();
   }
 
   Future<void> updateDate(DateTime date) async {

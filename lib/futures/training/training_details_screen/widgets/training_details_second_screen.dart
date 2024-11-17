@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tt_18/components/custom_button.dart';
 import 'package:tt_18/components/custom_text_field.dart';
@@ -7,7 +6,17 @@ import 'package:tt_18/core/colors.dart';
 
 class TrainingDetailsSeconsScreen extends StatefulWidget {
   final PageController pageController;
-  const TrainingDetailsSeconsScreen({super.key, required this.pageController});
+  final String? name;
+  final String? description;
+  final List<int>? selectedDays;
+  final Function onNext;
+  const TrainingDetailsSeconsScreen(
+      {super.key,
+      required this.pageController,
+      required this.onNext,
+      this.name,
+      this.description,
+      this.selectedDays});
 
   @override
   State<TrainingDetailsSeconsScreen> createState() =>
@@ -18,11 +27,27 @@ class _TrainingDetailsSeconsScreenState
     extends State<TrainingDetailsSeconsScreen> {
   String? name;
   String? description;
-  List<int?> selectedDays = [];
+  List<int> selectedDays = [];
 
   String _getDayAbbreviation(int weekday) {
     const dayAbbreviations = ["M", "T", "W", "T", "F", "S", "S"];
     return dayAbbreviations[weekday - 1];
+  }
+
+  @override
+  void initState() {
+    if (widget.name != null) {
+      name = widget.name;
+    }
+    if (widget.description != null) {
+      description = widget.description;
+    }
+    if (widget.selectedDays != null) {
+      if (widget.selectedDays!.isNotEmpty) {
+        selectedDays = widget.selectedDays!;
+      }
+    }
+    super.initState();
   }
 
   @override
@@ -120,7 +145,8 @@ class _TrainingDetailsSeconsScreenState
           height: 50,
         ),
         CustomButton(
-          onTap: () {
+          onTap: () async {
+            await widget.onNext(name, description, selectedDays);
             widget.pageController.nextPage(
                 duration: const Duration(microseconds: 500),
                 curve: Curves.easeInOut);

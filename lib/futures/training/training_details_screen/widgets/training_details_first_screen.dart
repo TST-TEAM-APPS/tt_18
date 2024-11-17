@@ -7,7 +7,13 @@ import 'package:tt_18/futures/training/model/training_hive_model.dart';
 
 class TrainingDetailsFirstScreen extends StatefulWidget {
   final PageController pageController;
-  const TrainingDetailsFirstScreen({super.key, required this.pageController});
+  final int? selectedCardId;
+  final Function onNext;
+  const TrainingDetailsFirstScreen(
+      {super.key,
+      required this.pageController,
+      required this.onNext,
+      this.selectedCardId});
 
   @override
   State<TrainingDetailsFirstScreen> createState() =>
@@ -24,7 +30,7 @@ class _TrainingDetailsFirstScreenState
     TrainingType(
         id: 1,
         name: 'Strength training',
-        imagePath: 'assets/icons/Cardiotraining.png'),
+        imagePath: 'assets/icons/Strengthtraining.png'),
     TrainingType(
         id: 2, name: 'Flexibility', imagePath: 'assets/icons/Flexibility.png'),
     TrainingType(
@@ -48,6 +54,14 @@ class _TrainingDetailsFirstScreenState
   ];
 
   int? selectedCard;
+
+  @override
+  void initState() {
+    if (widget.selectedCardId != null) {
+      selectedCard = widget.selectedCardId!;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +134,9 @@ class _TrainingDetailsFirstScreenState
           height: 10,
         ),
         CustomButton(
-          onTap: () {
+          onTap: () async {
+            await widget.onNext(trainiTypeList[selectedCard!]);
+
             widget.pageController.nextPage(
                 duration: const Duration(microseconds: 500),
                 curve: Curves.easeInOut);

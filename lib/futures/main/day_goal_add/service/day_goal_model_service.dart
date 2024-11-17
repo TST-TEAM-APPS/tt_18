@@ -33,6 +33,45 @@ class DayGoalModelService {
     await loadData();
   }
 
+  bool _isEqual(DayGoalModelHive trainingHiveModel, DateTime dateTime) {
+    bool? isTrue;
+    for (var date in trainingHiveModel.isDone) {
+      if (date.year == dateTime.year &&
+          date.month == dateTime.month &&
+          date.day == dateTime.day) {
+        isTrue = true;
+      }
+    }
+    return isTrue ?? false;
+  }
+
+  Future<void> taskComplete(DayGoalModelHive trainingModel) async {
+    final foodModelBox = await Hive.openBox<DayGoalModelHive>('_dayGoalList');
+    DayGoalModelHive newMoaqw =
+        foodModelBox.values.singleWhere((e) => e.id == trainingModel.id);
+    List<DateTime> completedDates;
+    if (_isEqual(trainingModel, _dateTime)) {
+      completedDates = List<DateTime>.from(trainingModel.isDone);
+      completedDates.removeWhere((e) {
+        return e.day == _dateTime.day &&
+            e.month == _dateTime.month &&
+            e.year == _dateTime.year;
+      });
+    } else {
+      completedDates = List<DateTime>.from(trainingModel.isDone);
+      completedDates.add(_dateTime);
+    }
+
+    newMoaqw.name = trainingModel.name;
+    newMoaqw.description = trainingModel.description;
+    newMoaqw.isDone = completedDates;
+    newMoaqw.reireration = trainingModel.reireration;
+
+    newMoaqw.tag = trainingModel.tag;
+    await newMoaqw.save();
+    await loadData();
+  }
+
   Future<void> setDayGoal(DayGoalModelHive dayGoalModel) async {
     final dayGoalModelBox =
         await Hive.openBox<DayGoalModelHive>('_dayGoalList');

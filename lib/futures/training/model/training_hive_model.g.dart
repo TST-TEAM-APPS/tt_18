@@ -25,13 +25,14 @@ class TrainingHiveModelAdapter extends TypeAdapter<TrainingHiveModel> {
       restTime: fields[5] as int,
       workingTime: fields[4] as int,
       trainingType: fields[7] as TrainingType,
+      completedDates: (fields[8] as List).cast<DateTime>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, TrainingHiveModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class TrainingHiveModelAdapter extends TypeAdapter<TrainingHiveModel> {
       ..writeByte(6)
       ..write(obj.numberOfRep)
       ..writeByte(7)
-      ..write(obj.trainingType);
+      ..write(obj.trainingType)
+      ..writeByte(8)
+      ..write(obj.completedDates);
   }
 
   @override
