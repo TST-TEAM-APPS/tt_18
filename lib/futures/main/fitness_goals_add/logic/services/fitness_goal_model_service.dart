@@ -36,36 +36,30 @@ class FitnessGoalModelService {
   Future<void> deleteFitnessGoal(FitnessGoalModelHive fitnessGoalModel) async {
     final fitnessGoalModelBox =
         await Hive.openBox<FitnessGoalModelHive>('_fitnessGoalList');
-    final fitnessGoalList = fitnessGoalModelBox.values.toList();
-    if (fitnessGoalList.contains(fitnessGoalModel)) {
-      _fitnessGoalList.remove(fitnessGoalModel);
-      await fitnessGoalModelBox.delete(fitnessGoalModel);
-    }
+    final element = fitnessGoalModelBox.values
+        .toList()
+        .singleWhere((e) => e.id == fitnessGoalModel.id);
+    await element.delete();
+    await fitnessGoalModelBox.compact();
+
     await loadData();
   }
 
-  Future<void> editFitnessGoal(FitnessGoalModelHive fitnessGoalModel) async {
-    final fitnessGoalModelBox =
+  Future<void> editFitnessGoal(FitnessGoalModelHive employeEditModel) async {
+    final foodModelBox =
         await Hive.openBox<FitnessGoalModelHive>('_fitnessGoalList');
+    FitnessGoalModelHive newMoaqw =
+        foodModelBox.values.singleWhere((e) => e.id == employeEditModel.id);
 
-    int foodToUpdateIndex = _fitnessGoalList.indexWhere((food) {
-      return food?.id == fitnessGoalModel.id;
-    });
-    if (foodToUpdateIndex != -1) {
-      _fitnessGoalList[foodToUpdateIndex] = fitnessGoalModel;
-    }
+    newMoaqw.name = employeEditModel.name;
+    newMoaqw.description = employeEditModel.description;
+    newMoaqw.currentProgress = employeEditModel.currentProgress;
+    newMoaqw.goal = employeEditModel.goal;
+    newMoaqw.imagePath = newMoaqw.imagePath;
+    newMoaqw.startedDate = employeEditModel.startedDate;
+    newMoaqw.endedDate = employeEditModel.endedDate;
 
-    final newValue = _fitnessGoalList[foodToUpdateIndex]!.copyWith(
-      name: fitnessGoalModel.name,
-      description: fitnessGoalModel.description,
-      imagePath: fitnessGoalModel.imagePath,
-      currentProgress: fitnessGoalModel.currentProgress,
-      goal: fitnessGoalModel.goal,
-      startedDate: fitnessGoalModel.startedDate,
-      endedDate: fitnessGoalModel.endedDate,
-    );
-
-    await fitnessGoalModelBox.put(newValue.id.toString(), newValue);
+    await newMoaqw.save();
     await loadData();
   }
 

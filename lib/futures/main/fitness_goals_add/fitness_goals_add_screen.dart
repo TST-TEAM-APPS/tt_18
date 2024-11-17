@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
+import 'package:tt_18/futures/food/model/food_item_model.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/fitness_goal_detail/fitness_goal_detail_screen.dart';
-import 'package:tt_18/futures/main/fitness_goals_add/logic/viewModel/fintess_goal_view_model.dart';
+import 'package:tt_18/futures/main/view_model/activity_view_model.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model.dart';
 
 class FitnessGoalsAddScreen extends StatefulWidget {
@@ -21,12 +22,14 @@ class _FitnessGoalsAddScreenState extends State<FitnessGoalsAddScreen> {
     FitnessGoalModel(
       id: 0,
       title: 'Losing weight',
+      format: 'Kg',
       subtitle: 'How many kg do you want to lose?',
       imagePath: 'assets/icons/loosing-weight.png',
     ),
     FitnessGoalModel(
       id: 1,
       title: 'Muscle mass gain',
+      format: 'Muscle mass',
       subtitle:
           'How many kilograms do you want to increase your muscle mass by?',
       imagePath: 'assets/icons/muscle-mass.png',
@@ -34,18 +37,21 @@ class _FitnessGoalsAddScreenState extends State<FitnessGoalsAddScreen> {
     FitnessGoalModel(
       id: 2,
       title: 'Increased strength',
-      subtitle: 'What exercise do you want to improve?',
+      format: 'Kg',
+      subtitle: 'What weight do you want to achieve?',
       imagePath: 'assets/icons/increased-strength.png',
       inputTitle: 'What exercise do you want to improve?',
     ),
     FitnessGoalModel(
       id: 3,
       title: 'Improved endurance',
+      format: 'Km',
       subtitle: 'What distance do you want to run/ride? (Km)',
       imagePath: 'assets/icons/improved-endurance.png',
     ),
     FitnessGoalModel(
       id: 4,
+      format: null,
       title: 'Improved flexibility',
       subtitle: 'What area of flexibility do you want to improve?',
       imagePath: 'assets/icons/improved-flexibility.png',

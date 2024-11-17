@@ -318,9 +318,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                               ? FoodModel(
                                   name: nameOfTheFood!,
                                   typeOfFood: foodType!,
-                                  date: widget.model != null
-                                      ? widget.model!.date
-                                      : widget.currentDate ?? DateTime.now(),
+                                  date: widget.currentDate ?? DateTime.now(),
                                   quantity: quantity!,
                                   quantityType: quantityType,
                                   calories: calories!,
@@ -329,11 +327,10 @@ class _FoodDetailsState extends State<FoodDetails> {
                                   carbs: carbs!,
                                 )
                               : widget.model!.copyWith(
+                                  id: widget.model!.id,
                                   name: nameOfTheFood!,
                                   typeOfFood: foodType!,
-                                  date: widget.model != null
-                                      ? widget.model!.date
-                                      : widget.currentDate ?? DateTime.now(),
+                                  date: widget.model!.date,
                                   quantity: quantity!,
                                   quantityType: quantityType,
                                   calories: calories!,

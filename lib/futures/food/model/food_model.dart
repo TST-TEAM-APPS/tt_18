@@ -34,25 +34,25 @@ enum Quantity {
 @HiveType(typeId: 0)
 class FoodModel extends HiveObject {
   @HiveField(0)
-  final int id;
+  int id;
   @HiveField(1)
-  final FoodType typeOfFood;
+  FoodType typeOfFood;
   @HiveField(2)
-  final DateTime date;
+  DateTime date;
   @HiveField(3)
-  final int quantity;
+  int quantity;
   @HiveField(4)
-  final Quantity quantityType;
+  Quantity quantityType;
   @HiveField(5)
-  final int calories;
+  int calories;
   @HiveField(6)
-  final double proteins;
+  double proteins;
   @HiveField(7)
-  final double fats;
+  double fats;
   @HiveField(8)
-  final double carbs;
+  double carbs;
   @HiveField(9)
-  final String name;
+  String name;
 
   FoodModel(
       {int? id,

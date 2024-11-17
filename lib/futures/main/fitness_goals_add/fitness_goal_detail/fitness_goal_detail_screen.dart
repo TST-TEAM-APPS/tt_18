@@ -1,3 +1,4 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tt_18/components/custom_button.dart';
@@ -6,15 +7,19 @@ import 'package:tt_18/components/custom_cupertino_picker.dart';
 import 'package:tt_18/components/custom_text_field.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
-import 'package:tt_18/futures/main/fitness_goals_add/logic/viewModel/fintess_goal_view_model.dart';
+import 'package:tt_18/futures/main/view_model/activity_view_model.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model_hive.dart';
 
 class FitnessGoalDetailScreen extends StatefulWidget {
   final FitnessGoalModel model;
   final ActivityViewModel viewModel;
+  final FitnessGoalModelHive? fitnessGoalModelHive;
   const FitnessGoalDetailScreen(
-      {super.key, required this.model, required this.viewModel});
+      {super.key,
+      required this.model,
+      required this.viewModel,
+      this.fitnessGoalModelHive});
 
   @override
   State<FitnessGoalDetailScreen> createState() =>
@@ -38,6 +43,13 @@ class _FitnessGoalDetailScreenState extends State<FitnessGoalDetailScreen> {
     endedDate = [
       DateTime.now(),
     ];
+
+    if (widget.fitnessGoalModelHive != null) {
+      selectedValue = widget.fitnessGoalModelHive!.goal!;
+      startedDate = <DateTime>[widget.fitnessGoalModelHive!.startedDate];
+      endedDate = <DateTime>[widget.fitnessGoalModelHive!.endedDate];
+      description = widget.fitnessGoalModelHive!.description;
+    }
     setState(() {});
     super.initState();
   }
@@ -108,6 +120,7 @@ class _FitnessGoalDetailScreenState extends State<FitnessGoalDetailScreen> {
                       height: 20,
                     ),
                     CustomCupertinoPicker(
+                      value: selectedValue,
                       onChange: (value) {
                         selectedValue = value;
                       },
@@ -245,7 +258,6 @@ class _FitnessGoalDetailScreenState extends State<FitnessGoalDetailScreen> {
                   value: endedDate!,
                   onChangeDate: (value) {
                     endedDate?[0] = value;
-
                     setState(() {});
                   },
                 ),
@@ -269,13 +281,34 @@ class _FitnessGoalDetailScreenState extends State<FitnessGoalDetailScreen> {
                 titleStyle:
                     AppFonts.displayMedium.copyWith(color: AppColors.white),
                 onTap: () {
+                  if (widget.fitnessGoalModelHive != null) {
+                    print(startedDate![0]!);
+                    widget.viewModel.onUpdatedFitnessGoal(
+                      FitnessGoalModelHive(
+                        id: widget.fitnessGoalModelHive!.id,
+                        goal: selectedValue,
+                        format: widget.fitnessGoalModelHive!.format,
+                        imagePath: widget.model.imagePath,
+                        currentProgress:
+                            widget.fitnessGoalModelHive!.currentProgress,
+                        name: widget.model.title,
+                        startedDate: startedDate![0]!,
+                        endedDate: endedDate![0]!,
+                      ),
+                    );
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    return;
+                  }
                   widget.viewModel.onFitnessGoalItemAdded(
                     FitnessGoalModelHive(
-                      goal: selectedValue,
+                      goal: widget.model.id == 4 ? null : selectedValue,
+                      description: description,
                       imagePath: widget.model.imagePath,
                       name: widget.model.title,
                       startedDate: startedDate![0]!,
                       endedDate: endedDate![0]!,
+                      format: widget.model.id == 3 ? 'Km' : null,
                     ),
                   );
                   Navigator.pop(context);

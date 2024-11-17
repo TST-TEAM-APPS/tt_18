@@ -344,20 +344,24 @@ class _ProgressWidget extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '${model.state.totalCalories ?? 0}',
-                            style: AppFonts.displayLarge
-                                .copyWith(color: AppColors.onPrimary),
-                          ),
-                          TextSpan(
-                            text: '/0',
-                            style: AppFonts.displaySmall
-                                .copyWith(color: AppColors.onPrimary),
-                          ),
-                        ],
+                    SizedBox(
+                      child: RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '${model.state.totalCalories ?? 0}',
+                              style: AppFonts.displayLarge
+                                  .copyWith(color: AppColors.onPrimary),
+                            ),
+                            TextSpan(
+                              text: '/0',
+                              style: AppFonts.displaySmall
+                                  .copyWith(color: AppColors.onPrimary),
+                            ),
+                          ],
+                        ),
                       ),
                     )
                   ],

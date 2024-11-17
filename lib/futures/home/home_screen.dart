@@ -6,10 +6,11 @@ import 'package:tt_18/core/btm.dart';
 import 'package:tt_18/core/colors.dart';
 import 'package:tt_18/futures/food/food_screen.dart';
 import 'package:tt_18/futures/food/model/food_model.dart';
-import 'package:tt_18/futures/main/fitness_goals_add/logic/viewModel/fintess_goal_view_model.dart';
+import 'package:tt_18/futures/main/view_model/activity_view_model.dart';
 import 'package:tt_18/futures/main/main_screen.dart';
 import 'package:tt_18/futures/settings/settings_screen.dart';
 import 'package:tt_18/futures/training/training_screen.dart';
+import 'package:tt_18/futures/training/view_model/training_view_model.dart';
 
 class FoodViewModelState {
   List<FoodModel?>? foodBreakfestList;
@@ -159,6 +160,8 @@ class FoodService {
   }
 
   Future<void> update() async {
+    final foodModelBox = await Hive.openBox<FoodModel>('_foodList');
+    _foodList = foodModelBox.values.toList();
     _foodBreakfestList = await getBreakfestList(_dateTime);
     _foodLunchList = await getLunchList(_dateTime);
     _foodDinnerList = await getDinnerList(_dateTime);
@@ -166,7 +169,6 @@ class FoodService {
     _totalCalories = await getTotalCalories(_dateTime);
     _totalCarbs = await getTotalCarbs(_dateTime);
     _totalFats = await getTotalFats(_dateTime);
-
     _totalProteins = await getTotalProteins(_dateTime);
   }
 
@@ -178,43 +180,36 @@ class FoodService {
   Future<void> setFood(FoodModel foodModel) async {
     final foodModelBox = await Hive.openBox<FoodModel>('_foodList');
     await foodModelBox.add(foodModel);
-    _foodList.add(foodModel);
+
     await update();
   }
 
   Future<void> deleteFood(FoodModel foodModel) async {
     final foodModelBox = await Hive.openBox<FoodModel>('_foodList');
-    final foodModelList = foodModelBox.values.toList();
-    if (foodModelList.contains(foodModel)) {
-      _foodList.remove(foodModel);
-      await foodModelBox.delete(foodModel);
-    }
+
+    final element =
+        foodModelBox.values.toList().singleWhere((e) => e.id == foodModel.id);
+    await element.delete();
+    await foodModelBox.compact();
+
     await update();
   }
 
-  Future<void> editFood(FoodModel foodEditModel) async {
+  Future<void> editFood(FoodModel employeEditModel) async {
     final foodModelBox = await Hive.openBox<FoodModel>('_foodList');
+    FoodModel newMoaqw =
+        foodModelBox.values.singleWhere((e) => e.id == employeEditModel.id);
 
-    int foodToUpdateIndex = _foodList.indexWhere((food) {
-      print('${food?.id} ${foodEditModel.id}');
-      return food?.id == foodEditModel.id;
-    });
-    if (foodToUpdateIndex != -1) {
-      _foodList[foodToUpdateIndex] = foodEditModel;
-    }
+    newMoaqw.name = employeEditModel.name;
+    newMoaqw.typeOfFood = employeEditModel.typeOfFood;
+    newMoaqw.quantity = employeEditModel.quantity;
+    newMoaqw.quantityType = employeEditModel.quantityType;
+    newMoaqw.proteins = employeEditModel.proteins;
+    newMoaqw.fats = employeEditModel.fats;
+    newMoaqw.carbs = employeEditModel.carbs;
+    newMoaqw.calories = employeEditModel.calories;
 
-    final newValue = _foodList[foodToUpdateIndex]!.copyWith(
-      quantity: foodEditModel.quantity,
-      proteins: foodEditModel.proteins,
-      typeOfFood: foodEditModel.typeOfFood,
-      calories: foodEditModel.calories,
-      carbs: foodEditModel.carbs,
-      fats: foodEditModel.fats,
-      quantityType: foodEditModel.quantityType,
-      name: foodEditModel.name,
-    );
-
-    await foodModelBox.put(newValue.id.toString(), newValue);
+    await newMoaqw.save();
     await update();
   }
 
@@ -348,7 +343,8 @@ class _HomeScreenState extends State<HomeScreen> {
       iconPath: 'assets/icons/main.png',
     ),
     PageModel(
-      page: const TrainingScreen(),
+      page: ChangeNotifierProvider(
+          create: (_) => TrainingViewModel(), child: const TrainingScreen()),
       iconPath: 'assets/icons/training.png',
     ),
     PageModel(

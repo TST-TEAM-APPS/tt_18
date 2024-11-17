@@ -4,7 +4,9 @@ import 'package:tt_18/core/colors.dart';
 
 class CustomCupertinoPicker extends StatefulWidget {
   final Function onChange;
-  const CustomCupertinoPicker({super.key, required this.onChange});
+  final int value;
+  const CustomCupertinoPicker(
+      {super.key, required this.onChange, this.value = 1});
 
   @override
   State<CustomCupertinoPicker> createState() => _CustomCupertinoPickerState();
@@ -12,6 +14,13 @@ class CustomCupertinoPicker extends StatefulWidget {
 
 class _CustomCupertinoPickerState extends State<CustomCupertinoPicker> {
   int selectedValue = 1;
+
+  @override
+  void initState() {
+    selectedValue = widget.value;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,6 +41,8 @@ class _CustomCupertinoPickerState extends State<CustomCupertinoPicker> {
             ),
           ),
         ),
+        scrollController:
+            FixedExtentScrollController(initialItem: selectedValue - 1),
         itemExtent: 40,
         onSelectedItemChanged: (int index) {
           setState(() {

@@ -4,6 +4,7 @@ class FitnessGoalModel {
   final String subtitle;
   final String imagePath;
   final String? inputTitle;
+  final String? format;
 
   FitnessGoalModel({
     this.inputTitle,
@@ -11,5 +12,6 @@ class FitnessGoalModel {
     required this.title,
     required this.subtitle,
     required this.imagePath,
+    required this.format,
   });
 }

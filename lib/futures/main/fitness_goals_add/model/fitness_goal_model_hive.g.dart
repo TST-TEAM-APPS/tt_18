@@ -25,13 +25,14 @@ class FitnessGoalModelHiveAdapter extends TypeAdapter<FitnessGoalModelHive> {
       currentProgress: fields[5] as int?,
       goal: fields[6] as int?,
       description: fields[7] as String?,
+      format: fields[8] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, FitnessGoalModelHive obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class FitnessGoalModelHiveAdapter extends TypeAdapter<FitnessGoalModelHive> {
       ..writeByte(6)
       ..write(obj.goal)
       ..writeByte(7)
-      ..write(obj.description);
+      ..write(obj.description)
+      ..writeByte(8)
+      ..write(obj.format);
   }
 
   @override
