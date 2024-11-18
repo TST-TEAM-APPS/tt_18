@@ -15,7 +15,13 @@ class FitnessGoalModelService {
 
     _fitnessGoalList = foodModelBox.values.toList().where((e) {
       return _dateTime.isAfter(e.startedDate) &&
-          _dateTime.isBefore(e.endedDate);
+              _dateTime.isBefore(e.endedDate) ||
+          _dateTime.month == e.startedDate.month &&
+              _dateTime.day == e.startedDate.day &&
+              _dateTime.year == e.startedDate.year ||
+          _dateTime.month == e.endedDate.month &&
+              _dateTime.day == e.endedDate.day &&
+              _dateTime.year == e.endedDate.year;
     }).toList();
   }
 
