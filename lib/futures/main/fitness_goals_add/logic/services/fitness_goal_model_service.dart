@@ -12,8 +12,11 @@ class FitnessGoalModelService {
   Future<void> loadData() async {
     final foodModelBox =
         await Hive.openBox<FitnessGoalModelHive>('_fitnessGoalList');
-    _fitnessGoalList = foodModelBox.values.toList();
-    // await update();
+
+    _fitnessGoalList = foodModelBox.values.toList().where((e) {
+      return _dateTime.isAfter(e.startedDate) &&
+          _dateTime.isBefore(e.endedDate);
+    }).toList();
   }
 
   // Future<void> update() async {

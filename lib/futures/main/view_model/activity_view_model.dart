@@ -122,6 +122,12 @@ class ActivityViewModel extends ChangeNotifier {
         isLoading: false,
       );
     });
+    _fitnessGoalModelService.updateDate(date).then((_) {
+      _fitnessState = FitnessGoalState(
+        fitnessGoalList: _fitnessGoalModelService.fitnessGoalList,
+        isLoading: false,
+      );
+    });
     _foodService.updateDate(date).then((_) {
       _foodCalorieState = FoodCalorieState(
         totalCalories: _foodService.totalCalories ?? 0,

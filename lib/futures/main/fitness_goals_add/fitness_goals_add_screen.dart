@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
-import 'package:tt_18/futures/food/model/food_item_model.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/fitness_goal_detail/fitness_goal_detail_screen.dart';
 import 'package:tt_18/futures/main/view_model/activity_view_model.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model.dart';
