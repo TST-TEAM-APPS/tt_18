@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tt_18/futures/food/model/food_model.dart';
 
 import 'package:tt_18/core/colors.dart';
-import 'package:tt_18/futures/home/home_screen.dart';
 import 'package:tt_18/futures/main/day_goal_add/model/day_goal_model_hive.dart';
 import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model_hive.dart';
-import 'package:tt_18/futures/onboarding/onb_screen.dart';
+import 'package:tt_18/futures/onboarding/splash_screen.dart';
 import 'package:tt_18/futures/training/model/training_hive_model.dart';
+import 'package:tt_18/services/service_locator.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final bindings = WidgetsFlutterBinding.ensureInitialized();
+  await ServiceLocator.setup();
   await Hive.initFlutter();
   Hive.registerAdapter(FoodModelAdapter());
   Hive.registerAdapter(FoodTypeAdapter());
@@ -20,18 +20,12 @@ void main() async {
   Hive.registerAdapter(DayGoalModelHiveAdapter());
   Hive.registerAdapter(TrainingHiveModelAdapter());
   Hive.registerAdapter(TrainingTypeAdapter());
-  await Future.delayed(const Duration(seconds: 2));
-  final prefs = await SharedPreferences.getInstance();
-  final showOnb = prefs.getBool('showOnb') ?? true;
-  runApp(MyApp(
-    homeScreen: showOnb ? const Onb() : const HomeScreen(),
-  ));
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.homeScreen});
-
-  final Widget homeScreen;
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +40,7 @@ class MyApp extends StatelessWidget {
             const BottomSheetThemeData(backgroundColor: Colors.transparent),
         splashFactory: NoSplash.splashFactory,
       ),
-      home: homeScreen,
+      home: const SplashScreen(),
     );
   }
 }
