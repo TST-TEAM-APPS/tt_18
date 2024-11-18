@@ -49,7 +49,11 @@ class _SettingsScreenState extends State<SettingsScreen> with ConfigMixin {
               _SettingItemWidget(
                 title: 'Write us',
                 onTap: () async => await FlutterEmailSender.send(
-                  Email(),
+                  Email(
+                    recipients: ['prattsrichard719@gmail.com'], 
+                    body: 'Write your message...',
+                    subject: 'Support'
+                  ),
                 ),
               ),
             ],

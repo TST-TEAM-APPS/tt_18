@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:custom_progressbar/custom_progressbar.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tt_18/core/mixins/network_mixin.dart';
 import 'package:tt_18/core/network_helper.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -15,9 +16,9 @@ class PrivacyScreen extends StatefulWidget {
 
 class _PrivacyScreenState extends State<PrivacyScreen> with NetworkMixin {
   late final WebViewController _controller;
-  final manager = WebViewCookieManager();
 
   var isLoading = true;
+  final String lastVisitedUrlKey = "lastVisitedUrl";
 
   String get _cssCode {
     return ".docs-ml-promotion, #docs-ml-header-id { display: none !important; } .app-container { margin: 0 !important; }";
@@ -46,7 +47,6 @@ class _PrivacyScreenState extends State<PrivacyScreen> with NetworkMixin {
 
     final WebViewController controller =
         WebViewController.fromPlatformCreationParams(params);
-    // #enddocregion platform_features
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -80,12 +80,14 @@ class _PrivacyScreenState extends State<PrivacyScreen> with NetworkMixin {
             log('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           },
-          onUrlChange: (UrlChange change) {
-            log('url change to ${change.url}');
+          onUrlChange: (UrlChange change) async {
+            log('URL changed to ${change.url}');
+            if (change.url != null) {
+              await _saveLastVisitedUrl(change.url!);
+            }
           },
         ),
-      )
-      ..loadRequest(Uri.parse(link));
+      );
 
     if (controller.platform is WebKitWebViewController) {
       (controller.platform as WebKitWebViewController)
@@ -93,6 +95,32 @@ class _PrivacyScreenState extends State<PrivacyScreen> with NetworkMixin {
     }
 
     _controller = controller;
+
+    _loadLastVisitedUrl().then((urlToLoad) {
+      _controller.loadRequest(Uri.parse(urlToLoad));
+    });
+  }
+
+  Future<void> _saveLastVisitedUrl(String url) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(lastVisitedUrlKey, url);
+      log('Last visited URL saved: $url');
+    } catch (e) {
+      log('Error saving last visited URL: $e');
+    }
+  }
+
+  Future<String> _loadLastVisitedUrl() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final url = prefs.getString(lastVisitedUrlKey) ?? link;
+      log('Last visited URL loaded: $url');
+      return url;
+    } catch (e) {
+      log('Error loading last visited URL: $e');
+      return link;
+    }
   }
 
   @override

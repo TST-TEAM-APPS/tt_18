@@ -21,7 +21,5 @@ mixin NetworkMixin {
   String get link => _configService.config.data[_networkService.network.code];
   bool get canNavigate =>
       !_configService.config.useMock &&
-      (_configService.config.data.containsKey(
-        _networkService.network.code,
-      ));
+      (_configService.config.data.containsKey(_networkService.network.code));
 }
