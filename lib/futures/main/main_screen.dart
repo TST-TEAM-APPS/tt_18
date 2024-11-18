@@ -567,7 +567,7 @@ class _MainScreenState extends State<MainScreen> {
                                                         .name,
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    maxLines: 2,
+                                                    maxLines: 1,
                                                     style: AppFonts.displaySmall
                                                         .copyWith(
                                                       color: AppColors.white,
