@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:tt_18/core/app_fonts.dart';
 import 'package:tt_18/core/colors.dart';
+import 'package:tt_18/core/mixins/config_mixin.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -10,7 +14,7 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends State<SettingsScreen> with ConfigMixin {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -22,36 +26,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               const _SettingLabelWidget(),
               _SettingItemWidget(
-                title: 'Version',
-                onTap: () {},
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              _SettingItemWidget(
                 title: 'Rate us',
-                onTap: () {},
+                onTap: () async => await InAppReview.instance.requestReview(),
               ),
               const SizedBox(
                 height: 20,
               ),
               _SettingItemWidget(
                 title: 'Terms of Use',
-                onTap: () {},
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              _SettingItemWidget(
-                title: 'About us',
-                onTap: () {},
+                onTap: () => launchUrlString(termsLink),
               ),
               const SizedBox(
                 height: 20,
               ),
               _SettingItemWidget(
                 title: 'Privacy Policy',
-                onTap: () {},
+                onTap: () => launchUrlString(termsLink),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              _SettingItemWidget(
+                title: 'Write us',
+                onTap: () async => await FlutterEmailSender.send(
+                  Email(),
+                ),
               ),
             ],
           ),
@@ -67,7 +66,7 @@ class _SettingLabelWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Setting',
+      'Settings',
       style: AppFonts.displayLarge.copyWith(
         color: AppColors.onBackground,
       ),
@@ -77,7 +76,7 @@ class _SettingLabelWidget extends StatelessWidget {
 
 class _SettingItemWidget extends StatelessWidget {
   final String title;
-  final Function onTap;
+  final VoidCallback onTap;
   const _SettingItemWidget({
     required this.title,
     required this.onTap,
@@ -85,37 +84,37 @@ class _SettingItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        highlightColor: Colors.white.withOpacity(0.5),
-        onTap: () => onTap,
-        child: Container(
-          padding: const EdgeInsets.only(bottom: 20),
-          decoration: const BoxDecoration(
-              color: Colors.transparent,
-              border: Border(
-                  bottom: BorderSide(
-                width: 1,
-                color: AppColors.primary,
-              ))),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: AppFonts.bodyLarge.copyWith(
-                  color: AppColors.onBackground,
-                ),
-              ),
-              Image.asset(
-                'assets/icons/arrow-left.png',
-                width: 36,
-                height: 36,
-                fit: BoxFit.cover,
-              ),
-            ],
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minSize: 1,
+      onPressed: onTap,
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 20),
+        decoration: const BoxDecoration(
+          color: Colors.transparent,
+          border: Border(
+            bottom: BorderSide(
+              width: 1,
+              color: AppColors.primary,
+            ),
           ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: AppFonts.bodyLarge.copyWith(
+                color: AppColors.onBackground,
+              ),
+            ),
+            Image.asset(
+              'assets/icons/arrow-left.png',
+              width: 36,
+              height: 36,
+              fit: BoxFit.cover,
+            ),
+          ],
         ),
       ),
     );

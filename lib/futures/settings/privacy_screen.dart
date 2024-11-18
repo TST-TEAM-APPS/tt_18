@@ -1,10 +1,8 @@
 import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
+import 'package:custom_progressbar/custom_progressbar.dart';
 import 'package:flutter/material.dart';
-import 'package:tt_18/core/network_mixin.dart';
+import 'package:tt_18/core/mixins/network_mixin.dart';
 import 'package:tt_18/core/network_helper.dart';
-
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
@@ -104,9 +102,17 @@ class _PrivacyScreenState extends State<PrivacyScreen> with NetworkMixin {
       body: SafeArea(
         child: isLoading
             ? Center(
-                child: CupertinoActivityIndicator(
-                  radius: 20,
-                  color: Theme.of(context).colorScheme.primary,
+                child: ProgressBar(
+                  containerWidth: 150,
+                  containerHeight: 150,
+                  progressColor: const Color(0xFF585555),
+                  boxFit: BoxFit.contain,
+                  iconHeight: 120,
+                  iconWidth: 120,
+                  imageFile: 'assets/images/icon.png',
+                  progressHeight: 150,
+                  progressWidth: 150,
+                  progressStrokeWidth: 7,
                 ),
               )
             : WebViewWidget(controller: _controller),

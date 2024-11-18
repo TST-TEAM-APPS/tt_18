@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:is_first_run/is_first_run.dart';
 import 'package:tt_18/core/network_helper.dart';
-import 'package:tt_18/core/network_mixin.dart';
+import 'package:tt_18/core/mixins/network_mixin.dart';
 import 'package:tt_18/futures/home/home_screen.dart';
 import 'package:tt_18/futures/onboarding/onb_screen.dart';
 import 'package:tt_18/futures/settings/privacy_screen.dart';

@@ -38,20 +38,23 @@ dependencies:
   hive_flutter: ^1.1.0
   hive: ^2.2.3
   percent_indicator: ^4.2.2
-  flutter_native_splash: ^2.4.0
+  flutter_native_splash: ^2.4.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flagsmith: ^6.0.0
   get_it: ^8.0.2
-  connectivity_plus: ^6.1.0
   get_ip_address: ^0.0.7
   http: ^1.2.2
   is_first_run: ^1.0.0
   in_app_review: ^2.0.9
   webview_flutter_wkwebview: ^3.16.2
   webview_flutter: ^4.10.0
+  url_launcher: ^6.3.1
+  flutter_email_sender: ^6.0.3
+  flutter_launcher_icons: ^0.14.1
+  custom_progressbar: ^0.0.2
 
 dev_dependencies:
   flutter_test:
@@ -107,11 +110,11 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 flutter_native_splash:
-  color: "#ffffff" 
-  image: assets/icons/onb1.png 
-  android: true 
-  ios: true 
-  web: false 
-  android_gravity: center 
-  ios_content_mode: scaleToFill 
-  fullscreen: true
+  color: "#585555" 
+  image: assets/images/icon.png 
+  
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/images/icon.png"
