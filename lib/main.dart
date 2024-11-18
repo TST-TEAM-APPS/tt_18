@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tt_18/futures/food/model/food_model.dart';
@@ -13,6 +14,7 @@ import 'package:tt_18/services/service_locator.dart';
 
 void main() async {
   final bindings = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: bindings);
   await ServiceLocator.setup();
   addLifecycleHandler();
   await Hive.initFlutter();

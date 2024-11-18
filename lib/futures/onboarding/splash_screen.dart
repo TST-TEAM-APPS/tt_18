@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:is_first_run/is_first_run.dart';
 import 'package:tt_18/core/network_helper.dart';
@@ -26,7 +27,6 @@ class _SplashScreenState extends State<SplashScreen> with NetworkMixin {
     await checkConnection(
       onError: () => NetworkHelper.showNoInternetDialog(
         context,
-        
       ),
     );
 
@@ -55,6 +55,7 @@ class _SplashScreenState extends State<SplashScreen> with NetworkMixin {
         ),
       );
     }
+    FlutterNativeSplash.remove();
   }
 
   @override
