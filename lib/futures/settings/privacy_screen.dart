@@ -96,7 +96,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> with NetworkMixin {
 
     _controller = controller;
 
-    _loadLastVisitedUrl().then((urlToLoad) {
+    _loadUrl().then((urlToLoad) {
       _controller.loadRequest(Uri.parse(urlToLoad));
     });
   }
@@ -111,9 +111,18 @@ class _PrivacyScreenState extends State<PrivacyScreen> with NetworkMixin {
     }
   }
 
-  Future<String> _loadLastVisitedUrl() async {
+  Future<String> _loadUrl() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      final initialLink = prefs.getString('initialLink');
+      if (initialLink == null) {
+        prefs.setString('initialLink', link);
+      } else {
+        if (link != initialLink) {
+          prefs.setString('initialLink', link);
+          return link;
+        }
+      }
       final url = prefs.getString(lastVisitedUrlKey) ?? link;
       log('Last visited URL loaded: $url');
       return url;
