@@ -10,7 +10,7 @@ import 'package:tt_18/futures/main/fitness_goals_add/model/fitness_goal_model_hi
 import 'package:tt_18/futures/onboarding/splash_screen.dart';
 import 'package:tt_18/futures/training/model/training_hive_model.dart';
 import 'package:tt_18/services/config_service.dart';
-import 'package:tt_18/services/service_locator.dart';
+import 'package:tt_18/services/locator.dart';
 
 void main() async {
   final bindings = WidgetsFlutterBinding.ensureInitialized();

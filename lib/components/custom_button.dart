@@ -15,18 +15,18 @@ class CustomButton extends StatefulWidget {
   final bool? isValid;
   final _Variant _variant;
 
-  const CustomButton(
-      {super.key,
-      required this.title,
-      this.titleStyle,
-      this.backgroundColor,
-      this.highlightColor,
-      this.isValid,
-      this.padding,
-      this.width,
-      this.borderRadius,
-      required this.onTap})
-      : _variant = _Variant.standart;
+  const CustomButton({
+    super.key,
+    required this.title,
+    this.titleStyle,
+    this.backgroundColor,
+    this.highlightColor,
+    this.isValid,
+    this.padding,
+    this.width,
+    this.borderRadius,
+    required this.onTap,
+  }) : _variant = _Variant.standart;
 
   const CustomButton.alert({
     super.key,
