@@ -8,7 +8,7 @@ class ConfigService {
 
   late final FlagsmithClient _flagsmithClient;
 
-  late final Config _config;
+  late final ConfigModel _config;
 
   Future<ConfigService> init() async {
     _flagsmithClient = await FlagsmithClient.init(
@@ -22,11 +22,11 @@ class ConfigService {
     final json = jsonDecode(
         await _flagsmithClient.getFeatureFlagValue(ConfigKey.config.name) ??
             '') as Map<String, dynamic>;
-    _config = Config.fromJson(json);
+    _config = ConfigModel.fromJson(json);
     return this;
   }
 
   void closeClient() => _flagsmithClient.close();
 
-  Config get config => _config;
+  ConfigModel get config => _config;
 }

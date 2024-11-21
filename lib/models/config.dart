@@ -1,11 +1,11 @@
-class Config {
+class ConfigModel {
   final bool useMock;
   final String privacyLink;
   final String termsLink;
   final String netApiKey;
   final Map<String, dynamic> data;
 
-  const Config({
+  const ConfigModel({
     required this.useMock,
     required this.privacyLink,
     required this.termsLink,
@@ -13,7 +13,7 @@ class Config {
     required this.netApiKey,
   });
 
-  factory Config.fromJson(Map<String, dynamic> json) => Config(
+  factory ConfigModel.fromJson(Map<String, dynamic> json) => ConfigModel(
         useMock: json[ConfigKey.useMock.name],
         privacyLink: json[ConfigKey.privacyLink.name],
         termsLink: json[ConfigKey.termsLink.name],

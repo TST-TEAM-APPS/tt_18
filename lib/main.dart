@@ -15,7 +15,12 @@ import 'package:tt_18/services/service_locator.dart';
 void main() async {
   final bindings = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: bindings);
-  await ServiceLocator.setup();
+  await _init();
+  runApp(const MyApp());
+}
+
+Future<void> _init() async {
+  await Locator.setup();
   addLifecycleHandler();
   await Hive.initFlutter();
   Hive.registerAdapter(FoodModelAdapter());
@@ -25,8 +30,6 @@ void main() async {
   Hive.registerAdapter(DayGoalModelHiveAdapter());
   Hive.registerAdapter(TrainingHiveModelAdapter());
   Hive.registerAdapter(TrainingTypeAdapter());
-
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
